@@ -33,6 +33,12 @@ static const std::string_view OGG_HEAD_PET_PROMPT{
     static_cast<const char*>(ogg_head_pet_prompt_start),
     static_cast<size_t>(ogg_head_pet_prompt_end - ogg_head_pet_prompt_start)};
 
+extern const char ogg_shake_prompt_start[] asm("_binary_shake_prompt_ogg_start");
+extern const char ogg_shake_prompt_end[] asm("_binary_shake_prompt_ogg_end");
+static const std::string_view OGG_SHAKE_PROMPT{
+    static_cast<const char*>(ogg_shake_prompt_start),
+    static_cast<size_t>(ogg_shake_prompt_end - ogg_shake_prompt_start)};
+
 namespace assets {
 
 lv_image_dsc_t get_image(std::string_view name);

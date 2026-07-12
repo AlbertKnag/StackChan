@@ -5,6 +5,8 @@
  */
 #pragma once
 #include "../modifiable.h"
+#include <assets/assets.h>
+#include <hal/board/hal_bridge.h>
 #include <hal/hal.h>
 #include <cstdint>
 
@@ -73,6 +75,7 @@ private:
         if (!_is_reacting) {
             // 首次触发时，记录状态以便恢复
             _is_reacting = true;
+            request_ai_shake_response(now);
 
             auto& avatar = stackchan.avatar();
 
@@ -93,6 +96,16 @@ private:
         if (_next_toggle_tick <= now) {
             _next_toggle_tick = now;  // 立即触发第一次嘴巴动作
         }
+    }
+
+    void request_ai_shake_response(uint32_t now)
+    {
+        if (_last_speech_tick != 0 && now - _last_speech_tick < _speech_cooldown_ms) {
+            return;
+        }
+        _last_speech_tick = now;
+
+        hal_bridge::app_invoke_prompt_audio(OGG_SHAKE_PROMPT, "", _prompt_frame_delay_ms);
     }
 
     void restore_state(Modifiable& stackchan)
@@ -132,6 +145,10 @@ private:
 
     int _dizzy_decorator_id = -1;
     int _shy_decorator_id   = -1;
+
+    static constexpr uint32_t _speech_cooldown_ms = 3000;
+    static constexpr uint32_t _prompt_frame_delay_ms = 10;
+    uint32_t _last_speech_tick = 0;
 };
 
 }  // namespace stackchan
