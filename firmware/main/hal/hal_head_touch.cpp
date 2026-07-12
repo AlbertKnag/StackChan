@@ -46,7 +46,7 @@ struct TouchData {
 
     bool is_touched() const
     {
-        return get_max_intensity() >= 1;
+        return get_max_intensity() >= 2;
     }
 };
 

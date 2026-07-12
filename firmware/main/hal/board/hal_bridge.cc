@@ -151,4 +151,11 @@ void app_play_sound(const std::string_view& sound)
     app.PlaySound(sound);
 }
 
+void app_invoke_prompt_audio(const std::string_view& prompt_ogg, const std::string_view& fallback_sound,
+                             uint32_t frame_delay_ms)
+{
+    auto& app = Application::GetInstance();
+    app.InvokePromptAudio(prompt_ogg, fallback_sound, frame_delay_ms);
+}
+
 }  // namespace hal_bridge

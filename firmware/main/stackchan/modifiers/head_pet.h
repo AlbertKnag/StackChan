@@ -7,6 +7,8 @@
 #include "../modifiable.h"
 #include "../avatar/decorators/decorators.h"
 #include "../utils/random.h"
+#include <assets/assets.h>
+#include <hal/board/hal_bridge.h>
 #include <smooth_ui_toolkit.hpp>
 #include <hal/hal.h>
 #include <cstdint>
@@ -63,6 +65,7 @@ public:
             _is_waiting_restore = false;
             restore_original_state(stackchan);
         }
+
     }
 
 private:
@@ -81,6 +84,8 @@ private:
 
         // 视觉反馈
         avatar.setEmotion(avatar::Emotion::Happy);
+
+        request_ai_pet_response();
 
         // 添加爱心装饰
         int duration = Random::getInstance().getInt(1500, 2500);
@@ -140,6 +145,17 @@ private:
         motion.moveWithSpeed(target_yaw, target_pitch, speed);
     }
 
+    void request_ai_pet_response()
+    {
+        uint32_t now = GetHAL().millis();
+        if (_last_speech_tick != 0 && now - _last_speech_tick < _speech_cooldown_ms) {
+            return;
+        }
+        _last_speech_tick = now;
+
+        hal_bridge::app_invoke_prompt_audio(OGG_HEAD_PET_PROMPT, OGG_HEAD_PET_COMFORT, _prompt_frame_delay_ms);
+    }
+
     // 信号相关
     int _signal_connection;
     volatile bool _event_swipe   = false;
@@ -157,6 +173,10 @@ private:
     avatar::Emotion _prev_emotion = avatar::Emotion::Neutral;
     int32_t _prev_yaw             = 0;
     int32_t _prev_pitch           = 0;
+
+    static constexpr uint32_t _speech_cooldown_ms = 3000;
+    static constexpr uint32_t _prompt_frame_delay_ms = 10;
+    uint32_t _last_speech_tick                    = 0;
 };
 
 }  // namespace stackchan

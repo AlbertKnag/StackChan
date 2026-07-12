@@ -63,5 +63,7 @@ void board_set_speaker_volume(uint8_t volume, bool permanent = false);
 uint8_t board_get_speaker_volume();
 
 void app_play_sound(const std::string_view& sound);
+void app_invoke_prompt_audio(const std::string_view& prompt_ogg, const std::string_view& fallback_sound = "",
+                             uint32_t frame_delay_ms = 60);
 
 }  // namespace hal_bridge
